@@ -23,7 +23,7 @@ impl Board {
         }
     }
 
-    pub fn mark_pos(&mut self, pos: (usize, usize), symbol: char) -> bool {
+    pub fn mark_position_with(&mut self, pos: (usize, usize), symbol: char) -> bool {
         return match self.squares[pos.0][pos.1] {
             '_' => {
                 self.squares[pos.0][pos.1] = symbol;
@@ -33,44 +33,63 @@ impl Board {
         };
     }
 
-    pub fn check_win_for(&self, symbol: char) -> bool {
-        let check = [symbol; DEFAULT_BOARD_SIZE_LEN];
+    pub fn check_win_for(&self, target_symbol: char) -> bool {
+        self.check_row_win(target_symbol)
+            || self.check_col_win(target_symbol)
+            || self.check_ltr_diagonal_win(target_symbol)
+            || self.check_rtl_diagonal_win(target_symbol)
+    }
 
-        for (i, row) in self.squares.iter().enumerate() {
-            if check == *row {
-                println!("ROW win!");
+    fn check_row_win(&self, target_symbol: char) -> bool {
+        let array_to_match = [target_symbol; DEFAULT_BOARD_SIZE_LEN];
+
+        for row in self.squares.iter() {
+            if array_to_match == *row {
                 return true;
             }
-
-            let mut col: [char; DEFAULT_BOARD_SIZE_LEN] = Default::default();
-            for n in 0..DEFAULT_BOARD_SIZE_LEN {
-                col[n] = self.squares[n][i]
-            }
-            if check == col {
-                println!("COL win!");
-                return true;
-            }
-        }
-
-        let mut ltr_diagonal: [char; DEFAULT_BOARD_SIZE_LEN] = Default::default();
-        for n in 0..DEFAULT_BOARD_SIZE_LEN {
-            ltr_diagonal[n] = self.squares[n][n];
-        }
-        if check == ltr_diagonal {
-            println!("LTR diag win!");
-            return true;
-        }
-
-        let mut rtl_diagonal: [char; DEFAULT_BOARD_SIZE_LEN] = Default::default();
-        for n in 0..DEFAULT_BOARD_SIZE_LEN {
-            rtl_diagonal[n] = self.squares[n][DEFAULT_BOARD_SIZE_LEN - n - 1];
-        }
-        if check == rtl_diagonal {
-            println!("RTL diag win!");
-            return true;
         }
 
         false
+    }
+
+    fn check_col_win(&self, target_symbol: char) -> bool {
+        let array_to_match = [target_symbol; DEFAULT_BOARD_SIZE_LEN];
+
+        for col_index in 0..DEFAULT_BOARD_SIZE_LEN {
+            let mut col: [char; DEFAULT_BOARD_SIZE_LEN] = Default::default();
+
+            for (row_index, row) in self.squares.iter().enumerate() {
+                col[row_index] = row[col_index];
+            }
+
+            if array_to_match == col {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    fn check_ltr_diagonal_win(&self, target_symbol: char) -> bool {
+        let mut ltr_diagonal: [char; DEFAULT_BOARD_SIZE_LEN] = Default::default();
+
+        for n in 0..DEFAULT_BOARD_SIZE_LEN {
+            ltr_diagonal[n] = self.squares[n][n];
+        }
+
+        let array_to_match = [target_symbol; DEFAULT_BOARD_SIZE_LEN];
+        array_to_match == ltr_diagonal
+    }
+
+    fn check_rtl_diagonal_win(&self, target_symbol: char) -> bool {
+        let mut rtl_diagonal: [char; DEFAULT_BOARD_SIZE_LEN] = Default::default();
+
+        for n in 0..DEFAULT_BOARD_SIZE_LEN {
+            rtl_diagonal[n] = self.squares[n][DEFAULT_BOARD_SIZE_LEN - n - 1];
+        }
+
+        let array_to_match = [target_symbol; DEFAULT_BOARD_SIZE_LEN];
+        array_to_match == rtl_diagonal
     }
 }
 
