@@ -33,7 +33,7 @@ impl Control {
             self.gs = self.next_state();
 
             match self.gs {
-                state::Game::PlayerOneWin(_) | state::Game::PlayerTwoWin(_) => {
+                state::Game::PlayerOneWin(_) | state::Game::PlayerTwoWin(_) | state::Game::Tie => {
                     self.gs.print_state();
                     self.board.print();
                     break;
