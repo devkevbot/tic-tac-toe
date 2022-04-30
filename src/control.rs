@@ -35,7 +35,7 @@ impl Control {
             match self.gs {
                 Game::PlayerOneWin(_) | Game::PlayerTwoWin(_) | Game::Tie => {
                     println!("{}", self.gs);
-                    self.board.print();
+                    println!("{}", self.board);
                     break;
                 }
                 _ => {
@@ -94,7 +94,7 @@ impl Control {
             p.symbol
         );
 
-        self.board.print();
+        println!("{}", self.board);
     }
 
     fn get_input(&self) -> (usize, usize) {

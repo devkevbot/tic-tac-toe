@@ -1,3 +1,5 @@
+use std::fmt::{self, Display, Formatter};
+
 pub const fn num_board_squares() -> u8 {
     num_board_squares_usize() as u8
 }
@@ -19,24 +21,6 @@ impl Board {
         Self {
             squares: [['_'; DEFAULT_BOARD_SIZE_LEN]; DEFAULT_BOARD_SIZE_LEN],
         }
-    }
-
-    pub fn print(&self) {
-        for (i, row) in self.squares.iter().enumerate() {
-            for (j, _) in row.iter().enumerate() {
-                match j {
-                    MAX_COL_INDEX => match self.squares[i][j] {
-                        '_' => println!("| {} |", i * DEFAULT_BOARD_SIZE_LEN + j),
-                        _ => println!("| {} |", self.squares[i][j]),
-                    },
-                    _ => match self.squares[i][j] {
-                        '_' => print!("| {} ", i * DEFAULT_BOARD_SIZE_LEN + j),
-                        _ => print!("| {} ", self.squares[i][j]),
-                    },
-                }
-            }
-        }
-        println!()
     }
 
     pub fn mark_pos(&mut self, pos: (usize, usize), symbol: char) -> bool {
@@ -87,5 +71,28 @@ impl Board {
         }
 
         false
+    }
+}
+
+impl Display for Board {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let mut output_str = String::new();
+        for (i, row) in self.squares.iter().enumerate() {
+            for (j, _) in row.iter().enumerate() {
+                match j {
+                    MAX_COL_INDEX => match self.squares[i][j] {
+                        '_' => output_str
+                            .push_str(format!("| {} |\n", i * DEFAULT_BOARD_SIZE_LEN + j).as_str()),
+                        _ => output_str.push_str(format!("| {} |\n", self.squares[i][j]).as_str()),
+                    },
+                    _ => match self.squares[i][j] {
+                        '_' => output_str
+                            .push_str(format!("| {} ", i * DEFAULT_BOARD_SIZE_LEN + j).as_str()),
+                        _ => output_str.push_str(format!("| {} ", self.squares[i][j]).as_str()),
+                    },
+                }
+            }
+        }
+        write!(f, "{}", output_str)
     }
 }
