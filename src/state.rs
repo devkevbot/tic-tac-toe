@@ -1,3 +1,5 @@
+use std::fmt::{self, Display, Formatter};
+
 pub enum Turn {
     PlayerOne,
     PlayerTwo,
@@ -20,18 +22,18 @@ pub enum Game {
     Tie,
 }
 
-impl Game {
-    pub fn print_state(&self) {
+impl Display for Game {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Initial => println!("Starting game!"),
-            Self::Playing => (),
+            Self::Initial => write!(f, "Starting game!"),
+            Self::Playing => write!(f, "Playing!"),
             Self::PlayerOneWin(turns_taken) => {
-                println!("Player One won in {turns_taken} turns!")
+                write!(f, "Player One won in {turns_taken} turns!")
             }
             Self::PlayerTwoWin(turns_taken) => {
-                println!("Player Two won in {turns_taken} turns!")
+                write!(f, "Player Two won in {turns_taken} turns!")
             }
-            Self::Tie => println!("Game has ended in a tie!"),
+            Self::Tie => write!(f, "Game has ended in a tie!"),
         }
     }
 }

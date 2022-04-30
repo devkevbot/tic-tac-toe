@@ -27,19 +27,19 @@ impl Control {
     }
 
     pub fn start_loop(&mut self) {
-        self.gs.print_state();
+        println!("{}", self.gs);
 
         loop {
             self.gs = self.next_state();
 
             match self.gs {
                 Game::PlayerOneWin(_) | Game::PlayerTwoWin(_) | Game::Tie => {
-                    self.gs.print_state();
+                    println!("{}", self.gs);
                     self.board.print();
                     break;
                 }
                 _ => {
-                    self.gs.print_state();
+                    println!("{}", self.gs);
                     self.ts = self.take_turn();
                     self.turns_left -= 1;
                 }
