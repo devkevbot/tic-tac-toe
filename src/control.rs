@@ -1,12 +1,12 @@
-use crate::board;
-use crate::player;
-use crate::state;
+use crate::board::{self, Board};
+use crate::player::Player;
+use crate::state::{Game, Turn};
 
 pub struct Control {
-    board: board::Board,
-    players: (player::Player, player::Player),
-    gs: state::Game,
-    ts: state::Turn,
+    board: Board,
+    players: (Player, Player),
+    gs: Game,
+    ts: Turn,
     amount_of_turns: u8,
     turns_left: u8,
 }
@@ -14,13 +14,13 @@ pub struct Control {
 impl Control {
     pub fn new() -> Self {
         Self {
-            board: board::Board::new(),
+            board: Board::new(),
             players: (
-                player::Player::new("Player One".to_string(), 'x'),
-                player::Player::new("Player Two".to_string(), 'o'),
+                Player::new("Player One".to_string(), 'x'),
+                Player::new("Player Two".to_string(), 'o'),
             ),
-            gs: state::Game::Initial,
-            ts: state::Turn::PlayerOne,
+            gs: Game::Initial,
+            ts: Turn::PlayerOne,
             amount_of_turns: board::num_board_squares(),
             turns_left: board::num_board_squares(),
         }
@@ -33,7 +33,7 @@ impl Control {
             self.gs = self.next_state();
 
             match self.gs {
-                state::Game::PlayerOneWin(_) | state::Game::PlayerTwoWin(_) | state::Game::Tie => {
+                Game::PlayerOneWin(_) | Game::PlayerTwoWin(_) | Game::Tie => {
                     self.gs.print_state();
                     self.board.print();
                     break;
@@ -47,24 +47,24 @@ impl Control {
         }
     }
 
-    fn next_state(&self) -> state::Game {
+    fn next_state(&self) -> Game {
         if self.board.check_win_for(self.players.0.symbol) {
-            state::Game::PlayerOneWin(self.amount_of_turns - self.turns_left)
+            Game::PlayerOneWin(self.amount_of_turns - self.turns_left)
         } else if self.board.check_win_for(self.players.1.symbol) {
-            state::Game::PlayerTwoWin(self.amount_of_turns - self.turns_left)
+            Game::PlayerTwoWin(self.amount_of_turns - self.turns_left)
         } else if self.turns_left == 0 {
-            state::Game::Tie
+            Game::Tie
         } else {
-            state::Game::Playing
+            Game::Playing
         }
     }
 
-    fn take_turn(&mut self) -> state::Turn {
+    fn take_turn(&mut self) -> Turn {
         self.print_turn_start_message();
 
         let p = match &self.ts {
-            state::Turn::PlayerOne => &self.players.0,
-            state::Turn::PlayerTwo => &self.players.1,
+            Turn::PlayerOne => &self.players.0,
+            Turn::PlayerTwo => &self.players.1,
         };
 
         loop {
@@ -83,8 +83,8 @@ impl Control {
 
     fn print_turn_start_message(&self) {
         let p = match &self.ts {
-            state::Turn::PlayerOne => &self.players.0,
-            state::Turn::PlayerTwo => &self.players.1,
+            Turn::PlayerOne => &self.players.0,
+            Turn::PlayerTwo => &self.players.1,
         };
 
         println!(
